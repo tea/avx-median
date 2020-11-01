@@ -14,12 +14,28 @@ float* output_data;
 float* raw_output_data;
 float* golden_output_data;
 
-void dump_reg(const char* const name, r512f value)
+void dump_reg(const char* const name, rf512 value)
 {
 	union
 	{
 		float f[16];
 		r512f r;
+	} values;
+	store_to_address(values.f, value);
+	std::cout << std::setw(10) << name << " = ";
+	for (int i = 0; i < 15; ++i)
+	{
+		std::cout << std::setw(10) << values.f[i] << " | ";
+	}
+	std::cout << values.f[15] << "\n";
+}
+
+void dump_reg(const char* const name, ri512 value)
+{
+	union
+	{
+		int32_t f[16];
+		ri512 r;
 	} values;
 	store_to_address(values.f, value);
 	std::cout << std::setw(10) << name << " = ";
@@ -40,7 +56,7 @@ static void validate(void(*method)(const float*, float*, size_t))
 		std::cerr << "Validation failed\n";
 		for (int i = 0; i < canary_size; ++i)
 			std::cerr << "#" << i << ": " << raw_output_data[i] << "\t" << golden_output_data[i] << "\n";
-		for (int i = canary_size; i < canary_size + 16; ++i)
+		for (int i = canary_size; i < canary_size + 32; ++i)
 			std::cerr << "#" << i << ": " << raw_output_data[i] << "\t" << golden_output_data[i] << "\t" << input_data[i - canary_size] << "\n";
 		for (int i = output_data_size - 16; i < output_data_size; ++i)
 			std::cerr << "#" << i << ": " << raw_output_data[i] << "\t" << golden_output_data[i] << "\n";
@@ -73,6 +89,7 @@ static void validate()
 	validate(median_Step3);
 	validate(median_Parallel);
 	validate(median_Parallel_avx2);
+	validate(median_Parallel_step1);
 }
 
 int main(int argc, char** argv)
@@ -123,9 +140,16 @@ BENCHMARK(Median, Parallel, BENCH_SAMPLES, BENCH_ITERATIONS)
 	median_Parallel(input_data, output_data, data_size);
 }
 
+#if 0
 BENCHMARK(Median, ParallelAVX2, BENCH_SAMPLES, BENCH_ITERATIONS)
 {
 	median_Parallel_avx2(input_data, output_data, data_size);
+}
+#endif
+
+BENCHMARK(Median, ParallelStep1, BENCH_SAMPLES, BENCH_ITERATIONS)
+{
+	median_Parallel_step1(input_data, output_data, data_size);
 }
 
 BENCHMARK(Median, Memcpy, BENCH_SAMPLES, BENCH_ITERATIONS)

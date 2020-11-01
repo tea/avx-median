@@ -10,6 +10,7 @@ void median_Step2(const float*, float*, size_t);
 void median_Step3(const float*, float*, size_t);
 void median_Parallel(const float*, float*, size_t);
 void median_Parallel_avx2(const float*, float*, size_t);
+void median_Parallel_step1(const float*, float*, size_t);
 
 #ifdef _MSC_VER
 #define KEWB_FORCE_INLINE __forceinline
@@ -23,7 +24,8 @@ using r512f = __m512;
 
 using m512 = uint32_t;
 
-void dump_reg(const char* const name, r512f value);
+void dump_reg(const char* const name, rf512 value);
+void dump_reg(const char* const name, ri512 value);
 #define DUMP_REG(r) dump_reg(#r, r)
 
 KEWB_FORCE_INLINE r512f
@@ -45,9 +47,15 @@ KEWB_FORCE_INLINE __m512
 }
 
 KEWB_FORCE_INLINE void
-    store_to_address(void* pdst, __m512 r)
+    store_to_address(void* pdst, rf512 r)
 {
     _mm512_mask_storeu_ps(pdst, (__mmask16)0xFFFFu, r);
+}
+
+KEWB_FORCE_INLINE void
+store_to_address(void* pdst, ri512 r)
+{
+    _mm512_mask_storeu_epi32(pdst, (__mmask16)0xFFFFu, r);
 }
 
 KEWB_FORCE_INLINE void
