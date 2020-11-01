@@ -13,7 +13,9 @@ add_executable (avx-median
 	step1.cpp
 	step2.cpp
 	step3.cpp
-)
+	parallel_avx512.cpp
+	parallel_avx2.cpp
+	)
 
 target_link_libraries(avx-median PRIVATE celero)
 

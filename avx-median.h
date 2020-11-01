@@ -8,6 +8,8 @@ void median_Step0(const float*, float*, size_t);
 void median_Step1(const float*, float*, size_t);
 void median_Step2(const float*, float*, size_t);
 void median_Step3(const float*, float*, size_t);
+void median_Parallel(const float*, float*, size_t);
+void median_Parallel_avx2(const float*, float*, size_t);
 
 #ifdef _MSC_VER
 #define KEWB_FORCE_INLINE __forceinline

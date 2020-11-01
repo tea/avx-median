@@ -71,6 +71,8 @@ static void validate()
 	validate(median_Step1);
 	validate(median_Step2);
 	validate(median_Step3);
+	validate(median_Parallel);
+	validate(median_Parallel_avx2);
 }
 
 int main(int argc, char** argv)
@@ -114,6 +116,16 @@ BENCHMARK(Median, Step2, BENCH_SAMPLES, BENCH_ITERATIONS)
 BENCHMARK(Median, Step3, BENCH_SAMPLES, BENCH_ITERATIONS)
 {
 	median_Step3(input_data, output_data, data_size);
+}
+
+BENCHMARK(Median, Parallel, BENCH_SAMPLES, BENCH_ITERATIONS)
+{
+	median_Parallel(input_data, output_data, data_size);
+}
+
+BENCHMARK(Median, ParallelAVX2, BENCH_SAMPLES, BENCH_ITERATIONS)
+{
+	median_Parallel_avx2(input_data, output_data, data_size);
 }
 
 BENCHMARK(Median, Memcpy, BENCH_SAMPLES, BENCH_ITERATIONS)
